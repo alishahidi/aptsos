@@ -62,7 +62,7 @@ echo "#################################"
 cd /tmp
 git clone https://aur.archlinux.org/yay-bin.git
 cd yay-bin
-makepkg -si
+makepkg -si --noconfirm
 cd ~
 
 yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono autotiling kbdd-git
