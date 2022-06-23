@@ -555,8 +555,8 @@ find $HOME/.config/i3/bin -type f -print0 | xargs -0 chmod 775
 clear;
 echo "###############################"
 echo "## At first time using emacs           ##"
-echo "## run `killall emacs`                 ##"
-echo "## & run `/usr/bin/emacs --daemon`     ##"
+echo "## run killall emacs                 ##"
+echo "## & run /usr/bin/emacs --daemon     ##"
 echo "## & anser y for every question asked ##"
 echo "###############################"
 

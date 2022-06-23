@@ -1,4 +1,5 @@
 xorg
+xorg-xinit
 rxvt-unicode
 picom
 nitrogen
