@@ -305,7 +305,7 @@ get_input () {
 
 ** Select best mirrors with reflector
 
-#+begin_src sh :tangle no
+#+begin_src sh :tangle aptsos_step2.sh
 
 reflector --sort score --latest 10 --protocol http,https --save /etc/pacman.d/mirrorlist
 
@@ -313,7 +313,7 @@ reflector --sort score --latest 10 --protocol http,https --save /etc/pacman.d/mi
 
 ** Refresh mirrors
 
-#+begin_src sh :tangle no
+#+begin_src sh :tangle aptsos_step2.sh
 
 pacman -Sy
 

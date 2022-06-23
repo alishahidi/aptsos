@@ -19,6 +19,10 @@ get_input () {
     echo $user_input
 }
 
+reflector --sort score --latest 10 --protocol http,https --save /etc/pacman.d/mirrorlist
+
+pacman -Sy
+
 clear;
 echo "##########################"
 echo "## Install sound system ##"
