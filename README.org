@@ -1,0 +1,568 @@
+#+title: Apts Os
+# #+PROPERTY: header-args:emacs-lisp :tangle config.el
+
+* About Aptsos
+
+I have created an installer for Arch Linux. And this installer is the next version of the installer that was in my dotfiles. My configs and programs will be installed in this script
+
+* How use this?
+
+We have two installation steps
+
+1. before boot into arch linux
+2. after boot into arch linux (and login with your user)
+
++ for step 1 use =aptsos_step1=
++ for step 2 use =aptsos_step2=
+
+** Warning
+
+/This script cant partition your system/
+
+*You Must run step 1 after =pacstrap && arch-chroot= !*
+
+* Pacstrap guide
+
+Create your partitions and format them.
+
+*If your system is efi please mount your efi partition in /mnt/boot/efi*
+*At first time you must create efi directory =mkdir /mnt/boot/efi= !*
+
+After mounting your partitions, you must run the following commands
+
+** Ntp true
+
+#+begin_src sh :tangle no
+
+timedatectl set-ntp true
+
+#+end_src
+
+** Hwcloock
+
+#+begin_src sh :tangle no
+
+hwclock --systohc
+
+#+end_src
+
+** Select best mirrors with reflector
+
+#+begin_src sh :tangle no
+
+reflector --sort score --latest 10 --protocol http,https --save /etc/pacman.d/mirrorlist
+
+#+end_src
+
+** Refresh mirrors
+
+#+begin_src sh :tangle no
+
+pacman -Sy
+
+#+end_src
+
+** Install base system
+
+#+begin_src sh :tangle no
+
+# if you are using intel processors replace amd-ucode with intel-ucode
+
+pacstap /mnt base linux linux-firmware linux-headers vim git wget amd-ucode
+
+#+end_src
+
+** Generate fstab
+
+#+begin_src sh :tangle no
+
+genfstab -U /mnt >> /mnt/fstab
+
+#+end_src
+
+* Step 1
+** A function for errors
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+error() { \
+    clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
+}
+
+#+end_src
+
+** Install dialog
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+clear;
+echo "##########################################"
+echo "## installing 'dialog' if not installed ##"
+echo "##########################################"
+pacman --noconfirm --needed -S dialog || error "Error install diolog."
+
+#+end_src
+
+** Welcome Message
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+welcome() { \
+    dialog --colors --title "\Z7\ZbInstalling Aptsos!" --msgbox "\Z4I have created an installer for Arch Linux.\nAnd this installer is the next version of the installer that was in my dotfiles.\nMy configs and programs will be installed in this script." 9 60
+
+    dialog --colors --title "\Z7\ZbStay Active!" --yes-label "Continue" --no-label "Exit" --yesno "\Z4Do You want continue installation?" 6 60
+}
+
+welcome || error "User choose to exit."
+
+#+end_src
+
+** Asking to confirm installation
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+lastchance() { \
+    dialog --colors --title "\Z7\ZbInstalling Aptsos!" --msgbox "\Z4WARNING! The APTSOS installation script made for myself. This may not work for you; therefore, it is strongly recommended that you not install this on production machines. It is recommended that you try this out in either a virtual machine or on a test machine." 10 60
+
+    dialog --colors --title "\Z7\ZbAre You Sure You Want To Do This?" --yes-label "Begin Installation" --no-label "Exit" --yesno "\Z4Shall we begin installing Aptsos?" 6 60 || { clear; exit 1; }
+}
+
+lastchance || error "User choose to exit."
+
+#+end_src
+
+** Get userinput function
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+get_input () {
+    local user_input=$(\
+        dialog --title "$1" \
+        --inputbox "$2" 8 40 \
+        3>&1 1>&2 2>&3 3>&- \
+        )
+    echo $user_input
+}
+
+#+end_src
+
+** Install base system
+
+*** Configuration system
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+timezone=$(get_input "Get timezone" "Enter your timezone: ex: Asia/Tehran")
+clear;
+
+ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
+hwclock --systohc
+sed -i '177s/.//' /etc/locale.gen
+locale-gen
+
+hostname=$(get_input "Get hostname" "Enter your hostname:")
+clear;
+echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+echo $hostname >> /etc/hostname
+echo "127.0.0.1 localhost" >> /etc/hosts
+echo "::1       localhost" >> /etc/hosts
+echo "127.0.1.1 $hostname.localdomain $hostname" >> /etc/hosts
+
+
+dialog --colors --title "Set root password" --msgbox "Plese enter password please." 9 60
+clear;
+passwd
+
+username=$(get_input "Get username" "Enter your username:")
+clear;
+useradd -m $username
+usermod -aG wheel ali
+
+dialog --colors --title "Set $username password" --msgbox "Plese enter password please." 9 60
+clear;
+
+passwd $username
+
+echo 'wheel  ALL=(ALL:ALL) ALL' >> /etc/sudoers
+echo "$username  ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+#+end_src
+
+*** Instll base packages
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+clear;
+pacman --needed --ask 4 -Sy - < packages/base.txt || error "Failed to install required packages."
+
+#+end_src
+
+*** Install Grub
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+clear;
+echo "##############################"
+echo "## Install Grub boot loader ##"
+echo "##############################"
+
+while true; do
+    read -p "Is your system efi? [Y/n] " yn
+    case $yn in
+        [Yy]* )
+            grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ArchLinux
+            grub-mkconfig -o /boot/grub/grub.cfg
+            break
+        ;;
+        [Nn]* )
+            grub-install /dev/sda
+            grub-mkconfig -o /boot/grub/grub.cfg
+            break
+        ;;
+        "" ) reboot;;
+        ,* ) echo "Please answer yes or no.";;
+    esac
+done
+
+#+end_src
+
+** Active services
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+clear;
+echo "#######################"
+echo "## Activate services ##"
+echo "#######################"
+
+systemctl enable NetworkManager
+systemctl enable bluetooth
+systemctl enable cups.service
+systemctl enable sshd
+systemctl enable avahi-daemon
+systemctl enable reflector.timer
+systemctl enable fstrim.timer
+systemctl enable firewalld
+systemctl enable acpid
+systemctl enable reflector
+
+#+end_src
+
+** Finish step 1
+
+#+begin_src sh :tangle aptsos_step1.sh
+
+clear;
+echo "#####################################################"
+echo "## Step 1 installation complete                    ##"
+echo "## Please exit form chroot with `exit` and         ##"
+echo "## & unmount all partition with `umount -a`        ##"
+echo "## & reboot with `reboot`                          ##"
+echo "## ** After rebooting run step2 of installation ** ##"
+echo "#####################################################"
+
+#+end_src
+
+* Step 2
+
+** A function for errors
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+error() { \
+    clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
+}
+
+#+end_src
+
+** Welcome Message
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+welcome() { \
+    dialog --colors --title "\Z7\ZbStep 2 of Installing Aptsos!" --msgbox "\Z4Packages and Configurations will be installed in this step" 9 60
+
+    dialog --colors --title "\Z7\ZbStay Active!" --yes-label "Continue" --no-label "Exit" --yesno "\Z4You might need enter sudo password!\n\nContinue installation?" 6 60
+}
+
+welcome || error "User choose to exit."
+
+#+end_src
+
+** Get userinput function
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+get_input () {
+    local user_input=$(\
+        dialog --title "$1" \
+        --inputbox "$2" 8 40 \
+        3>&1 1>&2 2>&3 3>&- \
+        )
+    echo $user_input
+}
+
+#+end_src
+
+** Install sound system
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "##########################"
+echo "## Install sound system ##"
+echo "##########################"
+
+sudo pacman --needed --ask 4 -Sy - < packages/sound.txt || error "Failed to install required packages."
+
+#+end_src
+
+** Install drivers and filesystems
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "#####################################"
+echo "## Install drivers and filesystems ##"
+echo "#####################################"
+
+sudo pacman --needed --ask 4 -Sy - < packages/drivers.txt || error "Failed to install required packages."
+
+#+end_src
+
+
+** Install fonts
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "###################"
+echo "## Install fonts ##"
+echo "###################"
+
+sudo pacman --needed --ask 4 -Sy - < packages/fonts.txt || error "Failed to install required packages."
+
+#+end_src
+
+** Install themes
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "####################"
+echo "## Install themes ##"
+echo "####################"
+
+sudo pacman --needed --ask 4 -Sy - < packages/themes.txt || error "Failed to install required packages."
+
+#+end_src
+
+** Install x server and Window Manager and needed packages
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "#############################################################"
+echo "## Install x server and Window Manager and needed packages ##"
+echo "#############################################################"
+
+sudo pacman --needed --ask 4 -Sy - < packages/gui.txt || error "Failed to install required packages."
+
+#+end_src
+
+** Install aur package manager
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "#################################"
+echo "## Install aur package manager ##"
+echo "#################################"
+
+cd /tmp
+git clone https://aur.archlinux.org/yay-bin.git
+cd yay-bin
+makepkg -si
+cd ~
+
+#+end_src
+
+** Install some packages from aur
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono autotiling kbdd-git
+
+#+end_src
+
+** Active services
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "#######################"
+echo "## Activate services ##"
+echo "#######################"
+
+systemctl enable --user pipewire-pulse pipewire
+
+#+end_src
+
+
+** Install wallpapers
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "########################"
+echo "## Instal wallpapers ##"
+echo "#######################"
+
+cd ~
+xdg-user-dirs-update
+cd Pictures
+git clone https://github.com/alishahidi/wallpapers
+mv wallpapers Wallpapers
+cd ~
+
+#+end_src
+
+
+** Fix some problems
+
+#+begin_src sh
+
+clear;
+echo "######################"
+echo "## Fix some problem ##"
+echo "#######################"
+
+# Disable random mac address
+echo -e "[device]\nwifi.scan-rand-mac-address=no" | sudo tee /etc/NetworkManager/conf.d/disable-random-mac.conf
+
+# tap to click
+echo 'Section "InputClass"
+        Identifier "libinput touchpad catchall"
+        MatchIsTouchpad "on"
+        MatchDevicePath "/dev/input/event*"
+        Driver "libinput"
+        Option "Tapping" "on"
+EndSection' > /etc/X11/xorg.conf.d/40-libinput.conf
+
+#+end_src
+
+** Install zsh
+
+#+begin_src sh
+
+clear;
+echo "#########################################"
+echo "## Install zsh and oh-my-zsh framework ##"
+echo "#########################################"
+
+
+sudo pacman --noconfirm --needed -S zsh wget exa figlet lolcat curl git fzf || error "Error install diolog."
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+
+echo "##########################"
+echo "## Change default shell ##"
+echo "##########################"
+
+chsh -s $(which zsh)
+
+
+#+end_src
+
+** Install configs
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "######################"
+echo "## Install Configs ##"
+echo "######################"
+
+cd ~
+mkdir -p Git/alishahidi
+cd Git/alishahidi
+git clone https://github.com/alishahidi/dotfiles
+cd dotfiles
+sudo cp -r etc usr /
+cp .config/* ~/.config
+cp .xinitrc ~
+cp .xprofile ~
+cp .zshrc ~
+cd ~
+
+#+end_src
+
+** Install doom emacs
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "#########################################################"
+echo "## Installing Doom Emacs. This may take a few minutes. ##"
+echo "#########################################################"
+sudo pacman --noconfirm --needed -S emacs || error "Error install diolog."
+git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom -y install
+~/.emacs.d/bin/doom sync
+
+#+end_src
+
+** Make scripts executable
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+
+clear;
+echo "#############################"
+echo "## Make scripts executable ##"
+echo "#############################"
+
+find $HOME/.local/bin -type f -print0 | xargs -0 chmod 775
+find $HOME/.config/scripts -type f -print0 | xargs -0 chmod 775
+find $HOME/.config/i3/bin -type f -print0 | xargs -0 chmod 775
+
+#+end_src
+
+** Important Hint
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+
+clear;
+echo "###############################"
+echo "## At first time using emacs           ##"
+echo "## run `killall emacs`                 ##"
+echo "## & run `/usr/bin/emacs --daemon`     ##"
+echo "## & anser y for every question asked ##"
+echo "###############################"
+
+#+end_src
+
+** Message for installation is complete!
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "##############################"
+echo "## Aptsos step 2 complete   ##"
+echo "##############################"
+
+while true; do
+    read -p "Do you want to reboot? recommended [Y/n] " yn
+    case $yn in
+        [Yy]* ) reboot;;
+        [Nn]* ) break;;
+        "" ) reboot;;
+        ,* ) echo "Please answer yes or no.";;
+    esac
+done
+
+#+end_src
