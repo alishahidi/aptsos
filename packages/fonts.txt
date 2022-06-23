@@ -25,8 +25,7 @@ ttf-fira-mono
 ttf-hack
 ttf-fira-code
 ttf-inconsolata
-ttf-jet
-brains-mono
+ttf-jetbrains-mono
 ttf-monofur
 adobe-source-code-pro-fonts
 inter-font
