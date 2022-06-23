@@ -50,7 +50,7 @@ echo "::1       localhost" >> /etc/hosts
 echo "127.0.1.1 $hostname.localdomain $hostname" >> /etc/hosts
 
 
-dialog --colors --title "Set root password" --msgbox "Plese enter password please." 9 60
+dialog --colors --title "Set root password" --msgbox "Plese enter password." 9 60
 clear;
 passwd
 
@@ -59,7 +59,7 @@ clear;
 useradd -m $username
 usermod -aG wheel ali
 
-dialog --colors --title "Set $username password" --msgbox "Plese enter password please." 9 60
+dialog --colors --title "Set $username password" --msgbox "Plese enter password." 9 60
 clear;
 
 passwd $username
@@ -103,7 +103,6 @@ systemctl enable bluetooth
 systemctl enable cups.service
 systemctl enable sshd
 systemctl enable avahi-daemon
-systemctl enable reflector.timer
 systemctl enable fstrim.timer
 systemctl enable firewalld
 systemctl enable acpid

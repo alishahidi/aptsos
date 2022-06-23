@@ -92,3 +92,5 @@ neofetch
 pv
 tldr
 sed
+cups
+cups-filters

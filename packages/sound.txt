@@ -1,6 +1,7 @@
 pipewire
 pipewire-alsa
 pipewire-jack
+pipewire-pulse
 pipewire-docs
 pipewire-media-session
 pavucontrol

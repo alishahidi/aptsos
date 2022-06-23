@@ -88,6 +88,42 @@ cd ~
 
 clear;
 echo "######################"
+echo "## Fix some problem ##"
+echo "#######################"
+
+# Disable random mac address
+echo -e "[device]\nwifi.scan-rand-mac-address=no" | sudo tee /etc/NetworkManager/conf.d/disable-random-mac.conf
+
+# tap to click
+echo 'Section "InputClass"
+        Identifier "libinput touchpad catchall"
+        MatchIsTouchpad "on"
+        MatchDevicePath "/dev/input/event*"
+        Driver "libinput"
+        Option "Tapping" "on"
+EndSection' > /etc/X11/xorg.conf.d/40-libinput.conf
+
+clear;
+echo "#########################################"
+echo "## Install zsh and oh-my-zsh framework ##"
+echo "#########################################"
+
+
+sudo pacman --noconfirm --needed -S zsh wget exa figlet lolcat curl git fzf || error "Error install diolog."
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+
+echo "##########################"
+echo "## Change default shell ##"
+echo "##########################"
+
+chsh -s $(which zsh)
+
+clear;
+echo "######################"
 echo "## Install Configs ##"
 echo "######################"
 
@@ -97,7 +133,7 @@ cd Git/alishahidi
 git clone https://github.com/alishahidi/dotfiles
 cd dotfiles
 sudo cp -r etc usr /
-cp .config/* ~/.config
+cp -r .config/* ~/.config
 cp .xinitrc ~
 cp .xprofile ~
 cp .zshrc ~
@@ -109,7 +145,7 @@ echo "## Installing Doom Emacs. This may take a few minutes. ##"
 echo "#########################################################"
 sudo pacman --noconfirm --needed -S emacs || error "Error install diolog."
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom -y install
+~/.emacs.d/bin/doom -! install
 ~/.emacs.d/bin/doom sync
 
 clear;
