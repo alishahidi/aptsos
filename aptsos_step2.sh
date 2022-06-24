@@ -69,7 +69,7 @@ cd yay-bin
 makepkg -si --noconfirm
 cd ~
 
-yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono autotiling kbdd-git
+yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata
 
 clear;
 echo "#######################"
@@ -159,15 +159,15 @@ echo "#############################"
 
 find $HOME/.local/bin -type f -print0 | xargs -0 chmod 775
 find $HOME/.config/scripts -type f -print0 | xargs -0 chmod 775
-find $HOME/.config/i3/bin -type f -print0 | xargs -0 chmod 775
+find $HOME/.config/status_scripts -type f -print0 | xargs -0 chmod 775
 
 clear;
-echo "###############################"
-echo "## At first time using emacs           ##"
-echo "## run killall emacs                 ##"
-echo "## & run /usr/bin/emacs --daemon     ##"
+echo "########################################"
+echo "## At first time using emacs          ##"
+echo "## run killall emacs                  ##"
+echo "## & run /usr/bin/emacs --daemon      ##"
 echo "## & anser y for every question asked ##"
-echo "###############################"
+echo "########################################"
 
 clear;
 echo "##############################"
