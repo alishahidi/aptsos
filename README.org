@@ -516,6 +516,24 @@ cd ~
 
 #+end_src
 
+** Instal dmenu_apts
+
+#+begin_src sh :tangle aptsos_step2.sh
+
+clear;
+echo "########################"
+echo "## Install dmenu_apts ##"
+echo "########################"
+
+cd ~
+cd Git/alishahidi
+git clone https://github.com/alishahidi/dmenu_apts
+cd dmenu_apts
+sudo make install
+cd ~
+
+#+end_src
+
 ** Install doom emacs
 
 #+begin_src sh :tangle aptsos_step2.sh

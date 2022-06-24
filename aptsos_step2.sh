@@ -144,6 +144,18 @@ cp .zshrc ~
 cd ~
 
 clear;
+echo "########################"
+echo "## Install dmenu_apts ##"
+echo "########################"
+
+cd ~
+cd Git/alishahidi
+git clone https://github.com/alishahidi/dmenu_apts
+cd dmenu_apts
+sudo make install
+cd ~
+
+clear;
 echo "#########################################################"
 echo "## Installing Doom Emacs. This may take a few minutes. ##"
 echo "#########################################################"
