@@ -146,6 +146,8 @@ cd ~
 clear;
 echo "########################"
 echo "## Install dmenu_apts ##"
+
+For install stage2 run =bash aptsos_stage2.sh=
 echo "########################"
 
 cd ~
@@ -159,7 +161,7 @@ clear;
 echo "#########################################################"
 echo "## Installing Doom Emacs. This may take a few minutes. ##"
 echo "#########################################################"
-sudo pacman --noconfirm --needed -S emacs || error "Error install diolog."
+sudo pacman --noconfirm --needed -S emacs
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom -! install
 ~/.emacs.d/bin/doom sync
