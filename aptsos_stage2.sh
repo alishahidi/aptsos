@@ -3,7 +3,7 @@ error() { \
 }
 
 welcome() { \
-    dialog --colors --title "\Z7\ZbStep 2 of Installing Aptsos!" --msgbox "\Z4Packages and Configurations will be installed in this step" 9 60
+    dialog --colors --title "\Z7\ZbStage 2 of Installing Aptsos!" --msgbox "\Z4Packages and Configurations will be installed in this stage" 9 60
 
     dialog --colors --title "\Z7\ZbStay Active!" --yes-label "Continue" --no-label "Exit" --yesno "\Z4You might need enter sudo password!\n\nContinue installation?" 6 60
 }
@@ -183,7 +183,7 @@ echo "########################################"
 
 clear;
 echo "##############################"
-echo "## Aptsos step 2 complete   ##"
+echo "## Aptsos stage 2 complete   ##"
 echo "##############################"
 
 while true; do
