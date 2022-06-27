@@ -16,6 +16,7 @@ pacman-contrib
 feh
 acpilight
 i3-gaps
+python-i3ipc
 xautolock
 brightnessctl
 acpi

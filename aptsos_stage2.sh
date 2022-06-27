@@ -166,6 +166,11 @@ git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom -! install
 ~/.emacs.d/bin/doom sync
 
+sudo pacman --noconfirm --needed -S vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim +'PlugInstall --sync' +qa
+
 clear;
 echo "#############################"
 echo "## Make scripts executable ##"
