@@ -3,7 +3,7 @@ pipewire-alsa
 pipewire-jack
 pipewire-pulse
 pipewire-docs
-pipewire-media-session
+wireplumber
 pavucontrol
 playerctl
 alsa-firmware
