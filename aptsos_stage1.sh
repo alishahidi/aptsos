@@ -109,10 +109,10 @@ systemctl enable acpid
 systemctl enable reflector
 
 clear;
-echo "#####################################################"
+echo "######################################################"
 echo "## Stage 1 installation complete                    ##"
-echo "## Please exit form chroot with `exit` and         ##"
-echo "## & unmount all partition with `umount -a`        ##"
-echo "## & reboot with `reboot`                          ##"
+echo "## Please exit form chroot with exit and            ##"
+echo "## & unmount all partition with umount -a           ##"
+echo "## & reboot with reboot                             ##"
 echo "## ** After rebooting run stage2 of installation ** ##"
-echo "#####################################################"
+echo "######################################################"

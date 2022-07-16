@@ -69,7 +69,7 @@ cd yay-bin
 makepkg -si --noconfirm
 cd ~
 
-yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata
+yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata dracula-gtk-theme
 
 clear;
 echo "#######################"
@@ -105,7 +105,7 @@ echo 'Section "InputClass"
         MatchDevicePath "/dev/input/event*"
         Driver "libinput"
         Option "Tapping" "on"
-EndSection' > /etc/X11/xorg.conf.d/40-libinput.conf
+EndSection' | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
 
 clear;
 echo "#########################################"
@@ -141,6 +141,14 @@ cp -r .config/* ~/.config
 cp .xinitrc ~
 cp .xprofile ~
 cp .zshrc ~
+cd ~
+
+mkdir -p Git/dracula
+cd Git/dracula
+git clone https://github.com/dracula/zsh.git
+cd zsh
+cp dracula.zsh-theme ~/.oh-my-zsh/themes/
+cp -r lib ~/.oh-my-zsh/themes
 cd ~
 
 clear;

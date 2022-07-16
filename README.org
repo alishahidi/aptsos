@@ -255,13 +255,13 @@ systemctl enable reflector
 #+begin_src sh :tangle aptsos_stage1.sh
 
 clear;
-echo "#####################################################"
+echo "######################################################"
 echo "## Stage 1 installation complete                    ##"
-echo "## Please exit form chroot with `exit` and         ##"
-echo "## & unmount all partition with `umount -a`        ##"
-echo "## & reboot with `reboot`                          ##"
+echo "## Please exit form chroot with exit and            ##"
+echo "## & unmount all partition with umount -a           ##"
+echo "## & reboot with reboot                             ##"
 echo "## ** After rebooting run stage2 of installation ** ##"
-echo "#####################################################"
+echo "######################################################"
 
 #+end_src
 
@@ -412,7 +412,7 @@ cd ~
 
 #+begin_src sh :tangle aptsos_stage2.sh
 
-yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata
+yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata dracula-gtk-theme
 
 #+end_src
 
@@ -468,7 +468,7 @@ echo 'Section "InputClass"
         MatchDevicePath "/dev/input/event*"
         Driver "libinput"
         Option "Tapping" "on"
-EndSection' > /etc/X11/xorg.conf.d/40-libinput.conf
+EndSection' | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
 
 #+end_src
 
@@ -517,6 +517,14 @@ cp -r .config/* ~/.config
 cp .xinitrc ~
 cp .xprofile ~
 cp .zshrc ~
+cd ~
+
+mkdir -p Git/dracula
+cd Git/dracula
+git clone https://github.com/dracula/zsh.git
+cd zsh
+cp dracula.zsh-theme ~/.oh-my-zsh/themes/
+cp -r lib ~/.oh-my-zsh/themes
 cd ~
 
 #+end_src
