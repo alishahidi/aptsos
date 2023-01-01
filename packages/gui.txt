@@ -9,7 +9,6 @@ xfce4-clipman-plugin
 gnome-keyring
 lxappearance
 dmenu
-nautilus
 arandr
 rofi
 pacman-contrib
