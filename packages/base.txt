@@ -92,3 +92,5 @@ tldr
 sed
 cups
 cups-filters
+fd
+ripgrep

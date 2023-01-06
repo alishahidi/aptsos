@@ -557,7 +557,7 @@ clear;
 echo "#########################################################"
 echo "## Installing Doom Emacs. This may take a few minutes. ##"
 echo "#########################################################"
-sudo pacman --noconfirm --needed -S emacs
+sudo pacman --noconfirm --needed -S emacs-nativecomp
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom -! install
 ~/.emacs.d/bin/doom sync

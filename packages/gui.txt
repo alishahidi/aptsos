@@ -59,3 +59,14 @@ qbittorrent
 mupdf
 atril
 phodav
+sway
+waybar
+xorg-xwayland
+xorg-xlsclients
+qt5-wayland
+glfw-wayland
+grim
+xdg-desktop-portal-wlr
+swaybg
+swayidle
+swaylock
