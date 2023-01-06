@@ -14,7 +14,7 @@ rofi
 pacman-contrib
 feh
 acpilight
-i3-gaps
+i3-wm
 python-i3ipc
 xautolock
 brightnessctl
