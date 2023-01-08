@@ -47,6 +47,7 @@ xbindkeys
 xdg-user-dirs-gtk
 xed
 alacritty
+kitty
 xorg-xdpyinfo
 uget
 aria2
