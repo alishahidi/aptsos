@@ -38,7 +38,7 @@ clear;
 
 ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
 hwclock --systohc
-sed -i '177s/.//' /etc/locale.gen
+sed -i '171s/.//' /etc/locale.gen
 locale-gen
 
 hostname=$(get_input "Get hostname" "Enter your hostname:")
