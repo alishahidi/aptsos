@@ -35,3 +35,5 @@ ttf-junicode
 noto-fonts-emoji
 ttf-font-awesome
 awesome-terminal-fonts
+ttf-fantasque-nerd
+ttf-fantasque-sans-mono
