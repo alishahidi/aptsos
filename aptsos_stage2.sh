@@ -69,7 +69,7 @@ cd yay-bin
 makepkg -si --noconfirm
 cd ~
 
-yay --noconfirm --needed -S nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata dracula-gtk-theme
+yay --noconfirm --needed -S ttf-inconsolata-nerd nerd-fonts-fantasque-sans-mono nerd-fonts-inconsolata dracula-gtk-theme
 
 clear;
 echo "#######################"
@@ -118,7 +118,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
 
 echo "##########################"
 echo "## Change default shell ##"
@@ -154,8 +154,6 @@ cd ~
 clear;
 echo "########################"
 echo "## Install dmenu_apts ##"
-
-For install stage2 run =bash aptsos_stage2.sh=
 echo "########################"
 
 cd ~
@@ -178,6 +176,9 @@ sudo pacman --noconfirm --needed -S vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim +'PlugInstall --sync' +qa
+
+sudo pacman --noconfirm --needed -S tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 clear;
 echo "#############################"

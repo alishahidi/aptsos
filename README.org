@@ -574,6 +574,15 @@ vim +'PlugInstall --sync' +qa
 
 #+end_src
 
+** Install tmux
+
+#+begin_src sh :tangle aptsos_stage2.sh
+
+sudo pacman --noconfirm --needed -S tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+#+end_src
+
 ** Make scripts executable
 
 #+begin_src sh :tangle aptsos_stage2.sh
