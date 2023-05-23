@@ -143,14 +143,6 @@ cp .xprofile ~
 cp .zshrc ~
 cd ~
 
-mkdir -p Git/dracula
-cd Git/dracula
-git clone https://github.com/dracula/zsh.git
-cd zsh
-cp dracula.zsh-theme ~/.oh-my-zsh/themes/
-cp -r lib ~/.oh-my-zsh/themes
-cd ~
-
 clear;
 echo "########################"
 echo "## Install dmenu_apts ##"
@@ -169,16 +161,8 @@ echo "## Installing Doom Emacs. This may take a few minutes. ##"
 echo "#########################################################"
 sudo pacman --noconfirm --needed -S emacs-nativecomp
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom -! install
-~/.emacs.d/bin/doom sync
-
-sudo pacman --noconfirm --needed -S vim
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim +'PlugInstall --sync' +qa
-
-sudo pacman --noconfirm --needed -S tmux
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+~/.config/emacs/bin/doom -! install
+~/.config/emacs/bin/doom sync
 
 clear;
 echo "#############################"
